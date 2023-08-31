@@ -1,2 +1,2 @@
 #!/bin/bash
-chmod 751 hello; ls -l hello|tail -n1|awk '{print substr($0,2)}'
+chmod 753 hello
