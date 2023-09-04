@@ -1,2 +1,2 @@
 #!/bin/bash
-IFS=$'\n' sorted_users=($(grep -v '^#' /etc/passwd | cut -d: -f1,6 | tr ':' '\t' | sort)); printf "User: %s, Home Directory: %s\n" ${sorted_users[*]}
+cut -d ':' -f 1,6 /etc/passwd | sort
