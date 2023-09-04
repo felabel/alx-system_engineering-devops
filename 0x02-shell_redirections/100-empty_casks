@@ -1,2 +1,2 @@
 #!/bin/bash
-find . -empty -exec sh -c 'printf "%s\n" "${0##*/}"' {} \; ; echo
+find . -empty -exec sh -c 'printf "%s\n" "${0##*/}"' {} \; -exec echo -e "\n"
