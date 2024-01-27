@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# a script that idsplays it's own pid
+
+sleep 5 &
+echo "$!"
