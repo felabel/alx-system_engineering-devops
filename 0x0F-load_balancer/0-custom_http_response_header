@@ -1,32 +1,43 @@
-#!/usr/bin/env bash
-# Installs Nginx with the following configurations:
-#+    Returns a page containing "Hello World!" when queried
-# Configures /redirect_me as a "301 Moved Permanently".
-# Includes a custom 404 page containing "Ceci n'est pas une page".
+#!/bin/bash
 
-sudo apt-get update
-sudo apt-get install -y nginx
+# Install Nginx if not already installed
+if ! command -v nginx &> /dev/null; then
+    sudo apt-get update
+    sudo apt-get install -y nginx
+fi
 
-sudo mkdir /etc/nginx/html
-sudo touch /etc/nginx/html/index.html
-echo "Hello World!" > /etc/nginx/html/index.html
-sudo touch /etc/nginx/html/404.html
-echo "Ceci n'est pas une page" > /etc/nginx/html/404.html
+# Create directory for web content
+sudo mkdir -p /var/www/html
 
-printf %s "server {
+# Create index.html file with "Hello World!"
+sudo echo "Hello World!" | sudo tee /var/www/html/index.html
+
+# Create 404.html file with custom message
+sudo echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+
+# Check if Nginx configuration directory exists, create if necessary
+if [ ! -d "/etc/nginx/sites-available" ]; then
+    sudo mkdir -p /etc/nginx/sites-available
+fi
+
+# Configure Nginx default site
+sudo printf "%s" "server {
     listen 80;
     listen [::]:80 default_server;
-    add_header X-Served-By $HOSTNAME;
-    root   /etc/nginx/html;
+    add_header X-Served-By \$HOSTNAME;
+    root   /var/www/html;
     index  index.html index.htm;
     location /redirect_me {
         return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
     }
     error_page 404 /404.html;
-    location /404 {
-      root /etc/nginx/html;
-      internal;
+    location = /404.html {
+        root /var/www/html;
+        internal;
     }
-}" > /etc/nginx/sites-available/default
+}" | sudo tee /etc/nginx/sites-available/default
 
-sudo service nginx restart
+# Check if Nginx is installed and service is available, restart if so
+if command -v nginx &> /dev/null && systemctl status nginx &> /dev/null; then
+    sudo systemctl restart nginx
+fi
