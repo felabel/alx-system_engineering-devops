@@ -1,1 +1,1 @@
-how to consume APIs
+how to consume APIs, making API requests
