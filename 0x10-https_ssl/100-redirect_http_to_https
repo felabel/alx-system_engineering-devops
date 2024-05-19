@@ -1,0 +1,27 @@
+global 
+
+
+        errorfile 408 /etc/haproxy/errors/408.http
+        errorfile 500 /etc/haproxy/errors/500.http
+        errorfile 502 /etc/haproxy/errors/502.http
+        errorfile 503 /etc/haproxy/errors/503.http
+        errorfile 504 /etc/haproxy/errors/504.http
+
+frontend devfelz-tech-frontend
+        bind *:80
+        mode http
+        http-request redirect scheme https code 301 unless { ssl_fc }
+        http-request set-header X_Forwarded-Proto http
+        default_backend devfelz-tech-backend
+
+frontend devfelz-tech-frontend-https
+        bind *:443 ssl crt /etc/haproxy/certs/www.devfelz.tech.pem
+        http-request set-header X-Forwarded-Proto https
+        default_backend devfelz-tech-backend
+
+backend devfelz-tech-backend
+    balance roundrobin
+    server 520760-web-01 34.224.6.226:80 check
+    server 520760-web-02 54.90.50.109:80 check
+
+
